@@ -57,7 +57,13 @@ function drawText(text, x, y, color, fontSize = 60,
     }
 
 // barra
+function createPaddle(x, y, width, height, color) {
+    return { 
+        x, y, width, height, color, score: 0
+    }
+}
 
+// criando o objeto da bola
 function createBall(x, y, radius, velocityX, velocityY, color) {
     return { x, y, radius, velocityX, velocityY, color, speed: initialBallSpeed }
 }
@@ -76,3 +82,42 @@ function movePaddle(event) {
     user.y = event.clinetY - rect.top - user.height / 2
 }
 
+// checando a colisão entre a bola e a barra
+function collision(ball, paddle) {
+    return (
+        ball.x + ball.radius > paddle.x && 
+        ball.x - ball.radius < paddle.width &&
+        ball.y + ball.radius > paddle.y &&
+        ball.y - ball.radius < paddle.y + paddle.height
+    )
+}
+
+
+// resetando a posição e velocidade da bola
+function resetBall() {
+
+    ball.x = canvas.width / 2
+    ball.y = Math.random() * (canvas.height - ball.radius * 2) + ball.radius
+
+    ball.velocityX =- ball.velocityX
+    ball.speed = initialBallSpeed
+}
+
+
+// logica do jogo 
+function update() {
+
+    // checando o score e reset se for necessario
+    if(ball.x - ball.radius < 0) {
+        computer.score++
+        resetBall()
+
+    } else if(ball.x + ball.radius > canvas.width) {
+        user.score++
+        resetBall()
+    }
+
+    // atualizando a posição da bola
+    ball.x += ball.velocityX
+    ball.y += ball.velocityY
+}
